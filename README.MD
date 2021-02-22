@@ -4,11 +4,11 @@ If you
 * want to download them automatically using youtube-dl
 * want use multiple instances in the background
 
-##Input: 
+## Input: 
     [#instances] Number of instances
     [#filepath]  File with Youtube urls
     
-##Scenario:
+## Scenario:
     Given:
         You have a file which contains Youtube urls.
         You have youtube-dl available in environment path. 
@@ -18,25 +18,25 @@ If you
         All files are downloaded to default path.
         
         
-##Features
+## Features
 * Displays name and download progress of file
 * Removes duplicated urls from file
 
-##Requirements
+## Requirements
 * youtube-dl
 * Java 8
 * Maven
 
-##Build
+## Build
     mvn clean package
 ##Run
     java -jar target/youtube-dl-thread-pool-cli-1.0-SNAPSHOT.jar
 
-##Future
+## Future
 * Ability to pass input as a args[]
 * Provide simple way to choose video|mp3
 
-##License
+## License
 Apache 2.0
 
  
