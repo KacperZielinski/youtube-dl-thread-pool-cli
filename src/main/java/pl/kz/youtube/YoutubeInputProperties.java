@@ -6,7 +6,6 @@ import java.util.Scanner;
 
 class YoutubeInputProperties {
     private static final int DEFAULT_POOL_SIZE = 3;
-    private static final int FORK_JOIN_POOL_SIZE_FIX = 1;
     private final String[] consoleArgs;
 
     private int numberOfInstances = DEFAULT_POOL_SIZE;
@@ -17,7 +16,7 @@ class YoutubeInputProperties {
     }
 
     int getNumberOfInstances() {
-        return numberOfInstances + FORK_JOIN_POOL_SIZE_FIX;
+        return numberOfInstances;
     }
 
     String getFilePath() {
@@ -43,8 +42,7 @@ class YoutubeInputProperties {
         try {
             return Integer.parseInt(consoleArg);
         } catch (NumberFormatException ex) {
-            System.out.println("Improper number of instances, using default: " +
-                    (DEFAULT_POOL_SIZE + FORK_JOIN_POOL_SIZE_FIX));
+            System.out.println("Improper number of instances, using default: " + DEFAULT_POOL_SIZE);
             return DEFAULT_POOL_SIZE;
         }
     }
