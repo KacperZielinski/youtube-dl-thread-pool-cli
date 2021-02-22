@@ -29,11 +29,10 @@ If you
 
 ## Build
     mvn clean package
-##Run
+## Run
     java -jar target/youtube-dl-thread-pool-cli-1.0-SNAPSHOT.jar
 
 ## Future
-* Ability to pass input as a args[]
 * Provide simple way to choose video|mp3
 
 ## License

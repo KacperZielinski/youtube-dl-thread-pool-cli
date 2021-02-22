@@ -1,13 +1,20 @@
 package pl.kz.youtube;
 
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.Scanner;
 
 class YoutubeInputProperties {
     private static final int DEFAULT_POOL_SIZE = 3;
     private static final int FORK_JOIN_POOL_SIZE_FIX = 1;
+    private final String[] consoleArgs;
 
     private int numberOfInstances = DEFAULT_POOL_SIZE;
     private String filePath;
+
+    public YoutubeInputProperties(String[] consoleArgs) {
+        this.consoleArgs = consoleArgs;
+    }
 
     int getNumberOfInstances() {
         return numberOfInstances + FORK_JOIN_POOL_SIZE_FIX;
@@ -17,17 +24,35 @@ class YoutubeInputProperties {
         return filePath;
     }
 
-    void waitForInput() {
+    YoutubeInputProperties getProperties() {
+        if (consoleArgs.length == 2) {
+            numberOfInstances = parseNumberOfInstances(consoleArgs[0]);
+            filePath = consoleArgs[1];
+        } else {
+            waitForInput();
+        }
+
+        if(!Files.exists(Paths.get(filePath))) {
+            throw new IllegalArgumentException("Filepath is incorrect!");
+        }
+
+        return this;
+    }
+
+    private int parseNumberOfInstances(String consoleArg) {
+        try {
+            return Integer.parseInt(consoleArg);
+        } catch (NumberFormatException ex) {
+            System.out.println("Improper number of instances, using default: " +
+                    (DEFAULT_POOL_SIZE + FORK_JOIN_POOL_SIZE_FIX));
+            return DEFAULT_POOL_SIZE;
+        }
+    }
+
+    private void waitForInput() {
         try (Scanner scanner = new Scanner(System.in)) {
-
             System.out.print("Provide number of threads: ");
-            String threadPoolSize = scanner.next();
-
-            try {
-                this.numberOfInstances = Integer.parseInt(threadPoolSize);
-            } catch (NumberFormatException ex) {
-                System.out.println("Improper threadPool size, using default: " + DEFAULT_POOL_SIZE);
-            }
+            numberOfInstances = parseNumberOfInstances(scanner.next());
 
             System.out.print("Provide path to file with Youtube urls: ");
             filePath = scanner.next();

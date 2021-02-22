@@ -21,18 +21,17 @@ class YoutubeFileTransformer {
 
             while((line = reader.readLine()) != null) {
                 currentLine++;
+
                 if(!line.isEmpty() && hasStandardYoutubeLinkLength(line)) {
                     videoUrls.add(line);
                 } else {
                     System.out.println("Error on line: " + currentLine + " " + line);
                 }
             }
-
         } catch (IOException e) {
             System.out.println("IOException: Cannot parse youtube url file: " + path);
             return ConcurrentHashMap.newKeySet();
         }
-
         return videoUrls;
     }
 

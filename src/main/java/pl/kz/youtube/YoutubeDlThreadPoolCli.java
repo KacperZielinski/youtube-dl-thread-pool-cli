@@ -6,9 +6,7 @@ import java.util.concurrent.ForkJoinPool;
 
 public class YoutubeDlThreadPoolCli {
     public static void main(String[] args) throws ExecutionException, InterruptedException {
-        YoutubeInputProperties input = new YoutubeInputProperties();
-        input.waitForInput();
-
+        final YoutubeInputProperties input = new YoutubeInputProperties(args).getProperties();
         final Set<String> youtubeVideos = YoutubeFileTransformer.createYoutubeVideoUrlsSetFromFile(input.getFilePath());
 
         ForkJoinPool customThreadPool = new ForkJoinPool(input.getNumberOfInstances());
