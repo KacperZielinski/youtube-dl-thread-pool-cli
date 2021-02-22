@@ -13,9 +13,11 @@ class YoutubeProcessHandler {
     private static final int PROGRESS_BAR_MAX_END_INDEX = 16;
     private static final int MINIMUM_PROGRESS_LINE_LENGTH = 17;
     private static final double MAXIMUM_PROGRESS = 100.0;
+    private static final int DISPLAY_THRESHOLD = 5;
 
     private String videoName = "still unknown..";
     private double downloadProgress;
+    private double lastDisplayedProgress;
 
     void downloadVideoFromUrl(String videoUrl) {
         String command = YOUTUBE_DL_APP_NAME + " " + videoUrl;
@@ -34,7 +36,11 @@ class YoutubeProcessHandler {
 
                     if(lineContainsProgressInfo(processOutputLine)) {
                         downloadProgress = updateProgress(processOutputLine);
-                        printCurrentProgress(videoUrl);
+
+                        if(downloadProgress > lastDisplayedProgress + DISPLAY_THRESHOLD) {
+                            lastDisplayedProgress = downloadProgress;
+                            printCurrentProgress(videoUrl);
+                        }
                     }
                 }
             }
