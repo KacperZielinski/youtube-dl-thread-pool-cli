@@ -6,27 +6,30 @@ import java.util.Scanner;
 
 class YoutubeInputProperties {
     private static final int DEFAULT_POOL_SIZE = 3;
-    private final String[] consoleArgs;
 
-    private int numberOfInstances = DEFAULT_POOL_SIZE;
+    private final String[] consoleArgs;
     private String filePath;
+    private int numberOfInstances = DEFAULT_POOL_SIZE;
 
     public YoutubeInputProperties(String[] consoleArgs) {
         this.consoleArgs = consoleArgs;
-    }
-
-    int getNumberOfInstances() {
-        return numberOfInstances;
     }
 
     String getFilePath() {
         return filePath;
     }
 
+    int getNumberOfInstances() {
+        return numberOfInstances;
+    }
+
     YoutubeInputProperties getProperties() {
-        if (consoleArgs.length == 2) {
-            numberOfInstances = parseNumberOfInstances(consoleArgs[0]);
-            filePath = consoleArgs[1];
+        if (consoleArgs.length > 0) {
+            filePath = consoleArgs[0];
+
+            if(consoleArgs.length > 1) {
+                numberOfInstances = parseNumberOfInstances(consoleArgs[1]);
+            }
         } else {
             waitForInput();
         }
