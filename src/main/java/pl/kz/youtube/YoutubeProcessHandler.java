@@ -3,9 +3,12 @@ package pl.kz.youtube;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.time.LocalTime;
+import java.time.temporal.ChronoUnit;
 
 class YoutubeProcessHandler {
     private static final String YOUTUBE_DL_APP_NAME = "youtube-dl";
+    private static final String VIDEO_QUALITY_FIX = "-f 22";
     private static final String PROGRESS_INFO_PREFIX = "[download] ";
     private static final String VIDEO_NAME_OUTPUT_LINE_HOTSPOT = "Destination: ";
     private static final String PERCENT = "%";
@@ -13,15 +16,15 @@ class YoutubeProcessHandler {
     private static final int PROGRESS_BAR_MAX_END_INDEX = 16;
     private static final int MINIMUM_PROGRESS_LINE_LENGTH = 17;
     private static final double MAXIMUM_PROGRESS = 100.0;
-    private static final int DISPLAY_THRESHOLD = 5;
+    private static final int DISPLAY_THRESHOLD = 0;
 
-    private String videoName = "still unknown..";
     private double downloadProgress;
     private double lastDisplayedProgress;
 
     void downloadVideoFromUrl(String videoUrl) {
-        String command = YOUTUBE_DL_APP_NAME + " " + videoUrl;
-        printCurrentProgress(videoUrl);
+        String videoName = "still unknown..";
+        String command = YOUTUBE_DL_APP_NAME + " " + VIDEO_QUALITY_FIX + " " + videoUrl;
+        printCurrentProgress(videoUrl, videoName);
 
         try {
             Process process = Runtime.getRuntime().exec(command);
@@ -39,18 +42,43 @@ class YoutubeProcessHandler {
 
                         if(downloadProgress > lastDisplayedProgress + DISPLAY_THRESHOLD) {
                             lastDisplayedProgress = downloadProgress;
-                            printCurrentProgress(videoUrl);
+                            printCurrentProgress(videoUrl, videoName);
                         }
                     }
                 }
             }
+            System.out.println(videoName + " has been downloaded!");
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
-    private void printCurrentProgress(String videoUrl) {
-        System.out.println(Thread.currentThread().getName() + ": " + videoUrl + ": " + videoName + " -> "
+    String getVideoName(String videoUrl) {
+        String videoName = ".part";
+        String checkVideoNameCommand = YOUTUBE_DL_APP_NAME + " --get-title " + videoUrl;
+
+        try {
+            Process process = Runtime.getRuntime().exec(checkVideoNameCommand);
+
+            try(BufferedReader processOutput = new BufferedReader(new InputStreamReader(process.getInputStream(), "CP1250"))) {
+                String processOutputLine;
+
+                while ((processOutputLine = processOutput.readLine()) != null) {
+                    videoName = processOutputLine;
+                }
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        return videoName;
+    }
+
+    private void printCurrentProgress(String videoUrl, String videoName) {
+        System.out.println(LocalTime.now().truncatedTo(ChronoUnit.SECONDS) + " | "
+                + Thread.currentThread().getName() + " | "
+                + videoUrl + " | "
+                + videoName + " -> "
                 + downloadProgress);
     }
 
